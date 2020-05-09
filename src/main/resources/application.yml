@@ -1,0 +1,64 @@
+server:
+  port: 12005
+  tomcat:
+    uri-encoding: UTF-8
+
+spring:
+  application:
+    name: rabbit-mq
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.198.203:3306/zuul?serverTimezone=GMT%2B8
+    username: root
+    password: yaoyao0203
+    type: com.alibaba.druid.pool.DruidDataSource
+    initialSize: 1
+    maxWait: 60000
+    minIdle: 1 #最小连接池数量
+    maxActive: 50 #最大连接池数量
+    poolPreparedStatements: false #是否缓存preparedStatement，也就是PSCache，对支持游戏的数据库提升大，mysql建议关闭
+    maxOpenPreparedStatements: -1 #要启用PSCache，配置必须大于0
+    validationQuery: SELECT 'x' #用来检测连接是否有效的sql，要求是一个查询语句
+    testWhileIdle: true #申请连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+    testOnBorrow: false #归还连接时执行validationQuery检测连接是否有效，做了这个配置会降低性能
+    testOnReturn: false #申请连接的时候检测，如果空闲时间大于timeBetweenEvictionRunsMillis，执行validationQuery检测连接是否有效(建议配置为true，不影响性能，并且保证安全性)
+    timeBetweenEvictionRunsMillis: 60000
+    minEvictableIdleTimeMillis: 300000
+
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+    virtual-host: /
+    publisher-returns: true
+    #设置为 true 后 消费者在消息没有被路由到合适队列情况下会被return监听，而不会自动删除
+    template:
+      mandatory: true
+      #开启重试机制，默认3次
+    listener:
+      simple:
+        retry:
+          enabled: true
+          max-attempts: 3
+          #手动确认机制
+        acknowledge-mode: manual
+    publisher-confirm-type: simple
+
+# xml扫描，多个目录用逗号或者分号分隔（告诉 Mapper 所对应的 XML 文件位置）
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    db-type: MYSQL
+configuration:
+  map-underscore-to-camel-case: true # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
+
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://${eureka.name}:${eureka.password}@${eureka.server}:${eureka.port}/eureka/
+  instance:
+    #让服务在eureka显示ip+port而不是主机名
+    prefer-ip-address: true
+    instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
