@@ -7,11 +7,11 @@ spring:
   application:
     name: rabbit-mq
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.198.203:3306/zuul?serverTimezone=GMT%2B8
-    username: root
-    password: yaoyao0203
-    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: ${spring.datasource.driver-class-name}
+    url: ${spring.datasource.url}
+    username: ${spring.datasource.username}
+    password: ${spring.datasource.password}
+    type: ${spring.datasource.type}
     initialSize: 1
     maxWait: 60000
     minIdle: 1 #最小连接池数量
@@ -53,7 +53,6 @@ mybatis-plus:
 configuration:
   map-underscore-to-camel-case: true # 是否开启自动驼峰命名规则映射:从数据库列名到Java属性驼峰命名的类似映射
 
-
 eureka:
   client:
     service-url:
@@ -62,3 +61,7 @@ eureka:
     #让服务在eureka显示ip+port而不是主机名
     prefer-ip-address: true
     instance-id: ${spring.cloud.client.ip-address}:${spring.application.name}:${server.port}
+
+logging:
+  level:
+    com.fuqiang.rabbitmq.mapper: debug

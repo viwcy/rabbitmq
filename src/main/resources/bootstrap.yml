@@ -1,0 +1,12 @@
+spring:
+  cloud:
+    config:
+      label: master
+      profile: dev
+      # Linux服务部署的config地址
+      #      uri: http://39.106.34.246:12001
+      uri: http://192.168.198.203:12001
+#      profile: test
+#      uri: http://192.168.198.98:13001
+#  mvc:
+#    static-path-pattern: /**
